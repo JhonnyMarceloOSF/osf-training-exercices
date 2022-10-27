@@ -323,7 +323,7 @@
             <targetReference>Find_Warehouse_Location</targetReference>
         </connector>
     </start>
-    <status>Draft</status>
+    <status>Active</status>
     <variables>
         <name>FulfillmentGroup</name>
         <apexClass>ConnectApi__FulfillmentGroupInputRepresentation</apexClass>

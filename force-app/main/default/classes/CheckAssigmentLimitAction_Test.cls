@@ -1,5 +1,5 @@
 @isTest
-private class Test_MyClass {
+private class CheckAssigmentLimitAction_Test {
     @isTest(SeeAllData=true)
     private static void TestLocationResponse(){
         // Test data setup        
