@@ -6,7 +6,7 @@ public class CheckAssigmentLimitAction {
 
         List<String> result = new List<String>();
 
-        Schema.Location locationAlbany  = [SELECT Id, Assignment_Limit__c FROM Location WHERE Name = 'Albany' LIMIT 1];
+        Schema.Location locationAlbany  = [SELECT Id, Assignment_Limit__c FROM Location WHERE Name = 'Albany' ORDER BY CreatedDate Desc LIMIT 1];
         
         List<FulfillmentOrder> fulfillmentOrderList = [SELECT Id FROM FulfillmentOrder WHERE Status =:SOM_FulfillmentOrderStatus.FULFILLED.enumValue];
                
@@ -15,7 +15,7 @@ public class CheckAssigmentLimitAction {
 
             return result;
         } else{
-            Schema.Location locationNewJersey = [SELECT Id FROM Location WHERE Name = 'New Jersey' LIMIT 1];
+            Schema.Location locationNewJersey = [SELECT Id FROM Location WHERE Name = 'New Jersey' ORDER BY CreatedDate Desc LIMIT 1];
             result.add(String.valueOf(locationNewJersey.Id));
 
             return result;

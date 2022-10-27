@@ -5,41 +5,47 @@ private class CheckAssigmentLimitAction_Test {
         // Test data setup        
         String orderId = SOM_TestDataFactory.createOrderAction();   
         Id orderSummaryId = SOM_TestDataFactory.createOrderSummary(orderId).Id;
-       
-        Schema.Location location = [SELECT Id FROM Location WHERE Name = 'Albany' LIMIT 1];
+               
+        Schema.Location locationAlbany = new Schema.Location (Name = 'Albany', LocationType = 'Warehouse', Assignment_Limit__c = 5);
+        insert locationAlbany;
 
         FulfillmentOrder fulfillmentOrder = SOM_TestDataFactory.createFulfillmentOrders(
-            orderSummaryId, location.Id, SOM_FulfillmentOrderType.WAREHOUSE)[0];
+            orderSummaryId, locationAlbany.Id, SOM_FulfillmentOrderType.WAREHOUSE)[0];
         fulfillmentOrder.Status = SOM_FulfillmentOrderStatus.FULFILLED.enumValue;
         SOM_DatabaseUtil.updateRecords(fulfillmentOrder, true);
              
         Test.startTest();
-		List<String> results = MyClass.checkAssignmentLimit();
+		List<String> results = CheckAssigmentLimitAction.checkAssignmentLimit();
         Test.stopTest();
         
-        System.assertEquals('1312D000000APITQA4', results[0]);        
+        System.assertEquals(locationAlbany.Id, results[0]);        
     }
     
     @isTest(SeeAllData=true)
     private static void TestLocationResponseWith7Orders(){
-        // Test data setup      
-        Schema.Location location = [SELECT Id FROM Location WHERE Name = 'Albany' LIMIT 1];
+        // Test data setup              
         Id orderSummaryId;
+
+        Schema.Location locationAlbany = new Schema.Location (Name = 'Albany', LocationType = 'Warehouse', Assignment_Limit__c = 5);
+        insert locationAlbany;
+
+        Schema.Location locationNewJersey = new Schema.Location (Name = 'New Jersey', LocationType = 'Warehouse', Assignment_Limit__c = 5);
+        insert locationNewJersey;
         
         for(Integer i = 0; i<7;i++){  
             String orderId = SOM_TestDataFactory.createOrderAction();   
             orderSummaryId = SOM_TestDataFactory.createOrderSummary(orderId).Id;
             
             FulfillmentOrder fulfillmentOrder = SOM_TestDataFactory.createFulfillmentOrders(
-                orderSummaryId, location.Id, SOM_FulfillmentOrderType.WAREHOUSE)[0];
+                orderSummaryId, locationAlbany.Id, SOM_FulfillmentOrderType.WAREHOUSE)[0];
             fulfillmentOrder.Status = SOM_FulfillmentOrderStatus.FULFILLED.enumValue;
             SOM_DatabaseUtil.updateRecords(fulfillmentOrder, true);
         }
               
         Test.startTest();
-		List<String> results = MyClass.checkAssignmentLimit();
+		List<String> results = CheckAssigmentLimitAction.checkAssignmentLimit();
         Test.stopTest();
         
-        System.assertEquals('1312D000000APIYQA4', results[0]);        
+        System.assertEquals(locationNewJersey.Id, results[0]);        
     }
 }
