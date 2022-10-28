@@ -12,7 +12,7 @@
         </connector>
         <flowTransactionModel>CurrentTransaction</flowTransactionModel>
         <outputParameters>
-            <assignToReference>FulfillmentGroup.fulfilledFromLocationId</assignToReference>
+            <assignToReference>CheckAssignmentLimitLocationId</assignToReference>
             <name>output</name>
         </outputParameters>
     </actionCalls>
@@ -21,7 +21,7 @@
         <name>Create_Fulfillment_Order</name>
         <label>Create Fulfillment Order</label>
         <locationX>1036</locationX>
-        <locationY>304</locationY>
+        <locationY>276</locationY>
         <actionName>createFulfillmentOrder</actionName>
         <actionType>createFulfillmentOrder</actionType>
         <connector>
@@ -88,7 +88,7 @@
             <assignToReference>FulfillmentGroup.fulfilledFromLocationId</assignToReference>
             <operator>Assign</operator>
             <value>
-                <elementReference>WarehouseLocation.Id</elementReference>
+                <elementReference>CheckAssignmentLimitLocationId</elementReference>
             </value>
         </assignmentItems>
         <assignmentItems>
@@ -174,7 +174,7 @@
         <name>Loop_through_Order_Delivery_Group_Summaries</name>
         <label>Order Delivery Group Summaries</label>
         <locationX>775</locationX>
-        <locationY>70</locationY>
+        <locationY>67</locationY>
         <assignNextValueToReference>OrderDeliveryGroupSummaryRecord</assignNextValueToReference>
         <collectionReference>OrderDeliveryGroupSummaries</collectionReference>
         <iterationOrder>Asc</iterationOrder>
@@ -220,31 +220,10 @@
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
     <recordLookups>
-        <name>Find_Warehouse_Location</name>
-        <label>A Warehouse Location</label>
-        <locationX>455</locationX>
-        <locationY>68</locationY>
-        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
-        <connector>
-            <targetReference>Get_Order_Delivery_Group_Summaries</targetReference>
-        </connector>
-        <filterLogic>and</filterLogic>
-        <filters>
-            <field>LocationType</field>
-            <operator>EqualTo</operator>
-            <value>
-                <stringValue>Warehouse</stringValue>
-            </value>
-        </filters>
-        <getFirstRecordOnly>false</getFirstRecordOnly>
-        <object>Location</object>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
-    </recordLookups>
-    <recordLookups>
         <name>Get_Order_Delivery_Group_Summaries</name>
         <label>Order Delivery Group Summaries</label>
-        <locationX>597</locationX>
-        <locationY>69</locationY>
+        <locationX>595</locationX>
+        <locationY>67</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Loop_through_Order_Delivery_Group_Summaries</targetReference>
@@ -266,7 +245,7 @@
         <name>Get_Order_Product_Summaries</name>
         <label>Order Product Summaries</label>
         <locationX>776</locationX>
-        <locationY>528</locationY>
+        <locationY>527</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Loop_Through_Order_Product_Summaries</targetReference>
@@ -277,13 +256,6 @@
             <operator>EqualTo</operator>
             <value>
                 <elementReference>OrderDeliveryGroupSummaryRecord.Id</elementReference>
-            </value>
-        </filters>
-        <filters>
-            <field>OrderSummaryId</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>OrderSummaryId</elementReference>
             </value>
         </filters>
         <object>OrderItemSummary</object>
@@ -317,13 +289,20 @@
     </recordUpdates>
     <runInMode>DefaultMode</runInMode>
     <start>
-        <locationX>50</locationX>
-        <locationY>50</locationY>
+        <locationX>166</locationX>
+        <locationY>48</locationY>
         <connector>
-            <targetReference>Find_Warehouse_Location</targetReference>
+            <targetReference>Get_Order_Delivery_Group_Summaries</targetReference>
         </connector>
     </start>
     <status>Active</status>
+    <variables>
+        <name>CheckAssignmentLimitLocationId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
     <variables>
         <name>FulfillmentGroup</name>
         <apexClass>ConnectApi__FulfillmentGroupInputRepresentation</apexClass>
