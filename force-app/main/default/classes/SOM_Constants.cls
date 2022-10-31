@@ -71,6 +71,7 @@ public class SOM_Constants {
         APPLICATION_JSON = 'application/json',
         POSTED = 'Posted',
         PROCESSED = 'Processed',
+        REQUIRE_IMMEDIATE_ATTENTION = 'Require Immediate attention',
         RESHIPPED = 'Reshipped',
         RESOLVED = 'Resolved',
         RETAIL_STORE = 'Retail Store',
