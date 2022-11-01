@@ -13,29 +13,10 @@ private class CheckFulfillmentOrders_Schedule_Test {
             orderSummaryId, locationAlbany.Id, SOM_FulfillmentOrderType.WAREHOUSE)[0];
         createfulfillmentOrder.Status = SOM_FulfillmentOrderStatus.ASSIGNED.enumValue;
         SOM_DatabaseUtil.updateRecords(createfulfillmentOrder, true);
-        
-        List<FulfillmentOrder> fulfillmentOrders = [SELECT Id, Status, OrderSummary.OriginalOrderId  
-          FROM FulfillmentOrder WHERE Status = 'Assigned'];
-
-        List<Order> orders = new List<Order>();
-        for (FulfillmentOrder fulfillmentOrder : fulfillmentOrders){
-            Order order = [SELECT Id, OrderedDate FROM Order 
-                           WHERE Id =: fulfillmentOrder.OrderSummary.OriginalOrderId ];            
-            
-            order.OrderedDate = Date.today().addDays(-3);
-            orders.add(order);
-        }
-        update orders;
-        
-        // Seconds Minutes Hours Day_of_month Month Day_of_week optional_year
-        Datetime workTime = System.now().addMinutes(1);
-        String CRON_EXP = '' + workTime.second() + ' ' + workTime.minute() + ' ' + workTime.hour()
-        + ' ' + workTime.day() + ' ' + workTime.month() + ' ? ' + workTime.year();
+                  
         
         Test.startTest();
-        String jobId = System.schedule('CheckFulfillmentOrdersScheduleTest',
-            CRON_EXP,
-            new CheckFulfillmentOrders_Schedule());
+        Database.executeBatch(new CheckFulfillmentOrders_Batch(), 10);
         Test.stopTest();
         
         FO_immediate_attention_delay__mdt fOImmediateAttentionDelayMdt = [SELECT Number_Of_Hours__c FROM FO_immediate_attention_delay__mdt];

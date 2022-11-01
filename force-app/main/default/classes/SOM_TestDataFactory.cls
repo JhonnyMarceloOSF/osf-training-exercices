@@ -77,6 +77,7 @@ public class SOM_TestDataFactory {
         order.EffectiveDate = input.effectiveDate;
         order.Status = input.status;
         order.SalesChannelId = input.salesChannelId;
+        order.orderedDate = Date.today().addDays(-3);
         return order;
     }
 
@@ -540,7 +541,7 @@ public class SOM_TestDataFactory {
 
         createOrderActionInput.order = new SOM_TestDataInput.OrderInput();
         createOrderActionInput.order.status = SOM_OrderStatus.DRAFT.enumValue;
-        createOrderActionInput.order.effectiveDate = Date.today();
+        createOrderActionInput.order.effectiveDate = Date.today().addDays(-3);
 
         createOrderActionInput.salesChannel = new SOM_TestDataInput.SalesChannelInput();
         createOrderActionInput.salesChannel.name = SOM_Constants.TEST;
