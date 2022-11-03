@@ -4,7 +4,6 @@ trigger RequireImmediateAttentionAlertTrigger on FOStatusChangedEvent (after ins
     
     for (FOStatusChangedEvent fOStatusChangedEvent : Trigger.new){
         if (fOStatusChangedEvent.NewStatus == 'Require Immediate attention'){
-            System.debug('Require Immediate attention');
             
             FulfillmentOrder fulfillmentOrder = [SELECT FulfillmentOrderNumber 
                                                  FROM FulfillmentOrder 
