@@ -10,7 +10,8 @@ public class SOM_FulfillmentOrderStatus extends SOM_BaseEnum {
     public static final SOM_FulfillmentOrderStatus PICKPACK = new SOM_FulfillmentOrderStatus(SOM_Constants.PICKPACK, SOM_Constants.PICKPACK);
     public static final SOM_FulfillmentOrderStatus FULFILLED = new SOM_FulfillmentOrderStatus(SOM_Constants.FULFILLED, SOM_Constants.FULFILLED);
     public static final SOM_FulfillmentOrderStatus CANCELLED = new SOM_FulfillmentOrderStatus(SOM_Constants.CANCELLED, SOM_Constants.CANCELLED);
-         
+    public static final SOM_FulfillmentOrderStatus REQUIRE_IMMEDIATE_ATTENTION = new SOM_FulfillmentOrderStatus(SOM_Constants.REQUIRE_IMMEDIATE_ATTENTION, SOM_Constants.REQUIRE_IMMEDIATE_ATTENTION);
+    
     private SOM_FulfillmentOrderStatus(String statusKey, String statusValue) {
         this.enumKey = statusKey;
         this.enumValue = statusValue;

@@ -77,6 +77,7 @@ public class SOM_TestDataFactory {
         order.EffectiveDate = input.effectiveDate;
         order.Status = input.status;
         order.SalesChannelId = input.salesChannelId;
+        order.orderedDate = input.effectiveDate;
         return order;
     }
 
@@ -502,6 +503,18 @@ public class SOM_TestDataFactory {
         return createOrderAction(inputOptions);
     }
 
+     /**
+     * @description Creates Order for test methods
+     *   Test class containing a test setup method cannot
+     *   have any methods annotated with "SeeAllData=true"
+     * @param effectiveDate - Date
+     * @return Id of the Order
+     */
+    public static String createOrderAction(Date effectiveDate) {
+        Map<String, String> inputOptions = new Map<String, String>();
+        return createOrderAction(inputOptions, effectiveDate);
+    }
+
     /**
      * @description Creates Order for test methods
      *   Test class containing a test setup method cannot
@@ -513,7 +526,27 @@ public class SOM_TestDataFactory {
      *  If nothing is specified in the param it creates a CardPaymentMethod
      * @return Id of the Order
      */
-    public static String createOrderAction(Map<String, String> inputOptions) {
+    public static String createOrderAction(Map<String, String> inputOptions) {        
+        return createOrderAction(inputOptions, null);
+    }
+
+     /**
+     * @description Creates Order for test methods
+     *   Test class containing a test setup method cannot
+     *   have any methods annotated with "SeeAllData=true"
+     * @param inputOptions - Map of input options
+     *   - AlternativePaymentMethod - NickName field of the alternative payment method
+     *   - DigitalWallet - Type field of the digital wallet to be created (amazon, apple, google, ...)
+     *   - PaymentGateway - Creating PaymentGateway is optional. Set CreatePaymentGateway true
+     *  If nothing is specified in the param it creates a CardPaymentMethod
+     * @param effectiveDate - Date, if effectiveDate is null than effectiveDate = Date.today()
+     * @return Id of the Order
+     */
+    public static String createOrderAction(Map<String, String> inputOptions, Date effectiveDate) {
+        if (effectiveDate == null){
+            effectiveDate = Date.today();
+        }
+
         if (inputOptions == null) {
             inputOptions = new Map<String, String>();
         }
@@ -540,7 +573,7 @@ public class SOM_TestDataFactory {
 
         createOrderActionInput.order = new SOM_TestDataInput.OrderInput();
         createOrderActionInput.order.status = SOM_OrderStatus.DRAFT.enumValue;
-        createOrderActionInput.order.effectiveDate = Date.today();
+        createOrderActionInput.order.effectiveDate = effectiveDate;
 
         createOrderActionInput.salesChannel = new SOM_TestDataInput.SalesChannelInput();
         createOrderActionInput.salesChannel.name = SOM_Constants.TEST;
