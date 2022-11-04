@@ -1,6 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
     <apiVersion>56.0</apiVersion>
+    <decisions>
+        <name>Check_If_Order_Summar_Exists</name>
+        <label>Check If Order Summar Exists</label>
+        <locationX>374</locationX>
+        <locationY>408</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>No</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Order_Summary_Match_Customer_Donation.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Set_Amount_To_Charity</targetReference>
+            </connector>
+            <label>Yes</label>
+        </rules>
+    </decisions>
     <environments>Default</environments>
     <formulas>
         <name>CalculateAmountToCharity</name>
@@ -32,11 +54,11 @@
     <recordLookups>
         <name>Order_Summary_Match_Customer_Donation</name>
         <label>Order Summary Match Customer Donation</label>
-        <locationX>308</locationX>
+        <locationX>374</locationX>
         <locationY>288</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
-            <targetReference>Set_Amount_To_Charity</targetReference>
+            <targetReference>Check_If_Order_Summar_Exists</targetReference>
         </connector>
         <filterLogic>and</filterLogic>
         <filters>
@@ -60,8 +82,8 @@
     <recordUpdates>
         <name>Set_Amount_To_Charity</name>
         <label>Set Amount To Charity</label>
-        <locationX>308</locationX>
-        <locationY>408</locationY>
+        <locationX>242</locationX>
+        <locationY>528</locationY>
         <inputAssignments>
             <field>Amount_To_Charity__c</field>
             <value>
