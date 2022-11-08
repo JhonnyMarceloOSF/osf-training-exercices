@@ -18,7 +18,7 @@ global with sharing class GrossPickingWebService {
                                                 WHERE OrderSummary.OrderNumber =:grossPickingRequest.externalOrderNumber ];
 
         if (itemOOS == true) {
-            fulfillmentOrder.Status = 'Out of Stock';
+            fulfillmentOrder.Status = 'Out of stock';
         } else {
             fulfillmentOrder.Status = 'Fulfilled';
         }
