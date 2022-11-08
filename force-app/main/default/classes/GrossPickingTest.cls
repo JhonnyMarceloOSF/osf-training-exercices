@@ -1,37 +1,42 @@
 @IsTest
 private class GrossPickingTest {
+    private static string externalOderNumber;
+    private static Id fulfillmentOrderId;
+
     @isTest(SeeAllData=true)
     static void withOOS() {
-        List<String> DataSetup = TestDataSetup();
+        TestDataSetup();
 
-        PostRequest(CreateGrossPickingRequest(true, DataSetup[0]));
+        PostRequest(CreateGrossPickingRequest(true));
 
         Test.startTest();
         GrossPickingWebService.getStock();
         Test.stopTest();
 
-        FulfillmentOrder  fulfillmentOrder = [SELECT Id, Status FROM FulfillmentOrder WHERE Id =:DataSetup[1]];
+        if (fulfillmentOrderId != null){
+            FulfillmentOrder  fulfillmentOrder = [SELECT Id, Status FROM FulfillmentOrder WHERE Id =:fulfillmentOrderId];
 
-        System.assertEquals(SOM_Constants.OUT_OF_STOCK, fulfillmentOrder.Status);
+            System.assertEquals(SOM_Constants.OUT_OF_STOCK, fulfillmentOrder.Status);
+        }
     }
 
     @isTest(SeeAllData=true)
     static void withOutOOS() {
-        List<String> DataSetup = TestDataSetup();
+        TestDataSetup();
        
-        PostRequest(CreateGrossPickingRequest(false, DataSetup[0]));
+        PostRequest(CreateGrossPickingRequest(false));
 
         Test.startTest();
         GrossPickingWebService.getStock();
         Test.stopTest();
+        if (fulfillmentOrderId != null){
+            FulfillmentOrder  fulfillmentOrder = [SELECT Id, Status FROM FulfillmentOrder WHERE Id =:fulfillmentOrderId];
 
-        FulfillmentOrder  fulfillmentOrder = [SELECT Id, Status FROM FulfillmentOrder WHERE Id =:DataSetup[1]];
-
-        System.assertEquals(SOM_Constants.FULFILLED, fulfillmentOrder.Status);
+            System.assertEquals(SOM_Constants.FULFILLED, fulfillmentOrder.Status);
+        }
    }
 
-   static List<String> TestDataSetup(){
-    List<String> result = new List<String>();
+   static void TestDataSetup(){
     String orderId = SOM_TestDataFactory.createOrderAction();   
     Id orderSummaryId = SOM_TestDataFactory.createOrderSummary(orderId).Id;
            
@@ -45,10 +50,8 @@ private class GrossPickingTest {
 
     OrderSummary orderSummary = [SELECT id, OrderNumber FROM OrderSummary WHERE id =:orderSummaryId];
 
-    result.add(orderSummary.OrderNumber);
-    result.add(String.valueOf(fulfillmentOrderToCreate.id));
-
-    return result;
+    externalOderNumber = orderSummary.OrderNumber;
+    fulfillmentOrderId = fulfillmentOrderToCreate.id;
     }
 
     static void PostRequest(GrossPickingRequest grossPickingRequest){
@@ -60,7 +63,7 @@ private class GrossPickingTest {
         RestContext.request = request;
     }
 
-    static GrossPickingRequest CreateGrossPickingRequest(Boolean isOOs, String externalOderNumber){
+    static GrossPickingRequest CreateGrossPickingRequest(Boolean isOOs){
         GrossPickingRequest grossPickingRequest = new GrossPickingRequest();
         grossPickingRequest.externalOrderNumber = externalOderNumber;
         GrossPickingRequestItem requestItem = new GrossPickingRequestItem();
