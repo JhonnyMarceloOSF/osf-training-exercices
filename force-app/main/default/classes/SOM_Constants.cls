@@ -58,6 +58,7 @@ public class SOM_Constants {
         ORDERED = 'Ordered',
         OTHER = 'Other',
         OUTDATED = 'Outdated',
+        OUT_OF_STOCK = 'Out of stock',
         PAID = 'PAID',
         PARTIALLY_ALLOCATED = 'Partially Allocated',
         PARTIALLYALLOCATED = 'PARTIALLYALLOCATED',

@@ -11,6 +11,7 @@ public class SOM_FulfillmentOrderStatus extends SOM_BaseEnum {
     public static final SOM_FulfillmentOrderStatus FULFILLED = new SOM_FulfillmentOrderStatus(SOM_Constants.FULFILLED, SOM_Constants.FULFILLED);
     public static final SOM_FulfillmentOrderStatus CANCELLED = new SOM_FulfillmentOrderStatus(SOM_Constants.CANCELLED, SOM_Constants.CANCELLED);
     public static final SOM_FulfillmentOrderStatus REQUIRE_IMMEDIATE_ATTENTION = new SOM_FulfillmentOrderStatus(SOM_Constants.REQUIRE_IMMEDIATE_ATTENTION, SOM_Constants.REQUIRE_IMMEDIATE_ATTENTION);
+    public static final SOM_FulfillmentOrderStatus OUT_OF_STOCK = new SOM_FulfillmentOrderStatus(SOM_Constants.OUT_OF_STOCK, SOM_Constants.OUT_OF_STOCK); 
     
     private SOM_FulfillmentOrderStatus(String statusKey, String statusValue) {
         this.enumKey = statusKey;
