@@ -1,0 +1,5 @@
+<PaymentGatewayProvider xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apexAdapter>LoyaltyAdapter</apexAdapter>
+    <idempotencySupported>No</idempotencySupported>
+    <masterLabel>LoyaltyPaymentGatewayProvider</masterLabel>
+</PaymentGatewayProvider>
