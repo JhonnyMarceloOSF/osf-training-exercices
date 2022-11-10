@@ -106,20 +106,11 @@ public with sharing class LoyaltyAdapter implements commercepayments.PaymentGate
       
         try 
         {
-            PaymentAuthorization paymentAuthorization;
-            PaymentGateway paymentGateway = [SELECT Id, PaymentGatewayName 
-                                            FROM PaymentGateway 
-                                            WHERE PaymentGatewayName = 'Loyalty' LIMIT 1];
+            PaymentAuthorization paymentAuthorization = [SELECT GatewayRefNumber 
+                                                        FROM PaymentAuthorization 
+                                                        WHERE Id =: captureRequest.paymentAuthorizationId 
+                                                        ORDER BY CreatedDate DESC LIMIT 1];
             
-
-            if (paymentGateway != null) {
-                paymentAuthorization = [SELECT GatewayRefNumber 
-                                        FROM PaymentAuthorization 
-                                        WHERE Id =: captureRequest.paymentAuthorizationId 
-                                        ORDER BY CreatedDate DESC LIMIT 1];
-            }
-
-
             if (paymentAuthorization != null) {
                 
                 commercepayments.PaymentsHttp http = new commercepayments.PaymentsHttp();
@@ -150,8 +141,7 @@ public with sharing class LoyaltyAdapter implements commercepayments.PaymentGate
                         captureResponse.setGatewayMessage('Capture failed - Invalid credit card type:' + loyaltyCardResponse.credit_card_type);
                     }
                 }
-
-                system.debug('Response - success');
+                
                 captureResponse.setGatewayDate(system.now());
                 captureResponse.setGatewayResultCode('00');
                 captureResponse.setGatewayResultCodeDescription('Transaction Normal');
