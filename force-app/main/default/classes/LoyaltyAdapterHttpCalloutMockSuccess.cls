@@ -1,3 +1,4 @@
+@IsTest
 public class LoyaltyAdapterHttpCalloutMockSuccess implements HttpCalloutMock{
     public HTTPResponse respond(HTTPRequest request) {
         System.assertEquals('GET', request.getMethod());

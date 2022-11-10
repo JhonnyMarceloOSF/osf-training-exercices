@@ -1,4 +1,4 @@
-@isTest
+@IsTest
 public class LoyaltyAdapterTest {
     @isTest
     public static void ValidCardType() {
@@ -13,17 +13,16 @@ public class LoyaltyAdapterTest {
         LoyaltyAdapter loyaltyAdapter = new LoyaltyAdapter();
         
         Test.startTest();
-        commercepayments.GatewayResponse captureResponse = loyaltyAdapter.processRequest(p);
-        system.assert(captureResponse instanceOf commercepayments.CaptureResponse, 'Response is not a valid Capture response');
+        commercepayments.GatewayResponse captureResponse = loyaltyAdapter.processRequest(p);        
         Test.stopTest();
+
+        System.assert(captureResponse instanceOf commercepayments.CaptureResponse, 'Response is not a valid Capture response');
     }
 
     @isTest
     public static void InvalidCardType() {
         PaymentAuthorization auth = initializeAuthObject();
         insert auth;
-               
-        Test.startTest();
         
         Test.setMock(HttpCalloutMock.class, new LoyaltyAdapterHttpCalloutMockFailure());
         
@@ -32,9 +31,11 @@ public class LoyaltyAdapterTest {
         commercepayments.PaymentGatewayContext p = new commercepayments.PaymentGatewayContext(captureRequest, commercepayments.RequestType.capture);
         LoyaltyAdapter loyaltyAdapter = new LoyaltyAdapter();
         
-        commercepayments.GatewayResponse captureResponse = loyaltyAdapter.processRequest(p);
-        system.assert(captureResponse instanceOf commercepayments.CaptureResponse, 'Response is not a valid Capture response');
+        Test.startTest();
+        commercepayments.GatewayResponse captureResponse = loyaltyAdapter.processRequest(p);        
         Test.stopTest();
+
+        System.assert(captureResponse instanceOf commercepayments.CaptureResponse, 'Response is not a valid Capture response');
     }
 
 
@@ -46,7 +47,8 @@ public class LoyaltyAdapterTest {
         auth.ProcessingMode = 'External';
         auth.GatewayRefNumber = 'testreferencenumber';
         auth.GatewayRefDetails = '{"method":"credit_card","transaction_id":"ET119982"}';
-        return auth;
-    
+
+        return auth;    
     }
-}
+
+  }
