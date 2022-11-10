@@ -1,4 +1,4 @@
-global with sharing class LoyaltyAdapter implements commercepayments.PaymentGatewayAdapter {
+public with sharing class LoyaltyAdapter implements commercepayments.PaymentGatewayAdapter {
     private static final commercepayments.SalesforceResultCodeInfo SUCCESS_SALESFORCE_RESULT_CODE_INFO = 
         new commercepayments.SalesforceResultCodeInfo(commercepayments.SalesforceResultCode.Success);
     private static final commercepayments.SalesforceResultCodeInfo DECLINE_SALESFORCE_RESULT_CODE_INFO = 
@@ -9,7 +9,7 @@ global with sharing class LoyaltyAdapter implements commercepayments.PaymentGate
     public static final String MAESTRO = 'maestro';
     
     
-    global commercepayments.GatewayResponse processRequest(commercepayments.paymentGatewayContext gatewayContext) {
+    public commercepayments.GatewayResponse processRequest(commercepayments.paymentGatewayContext gatewayContext) {
     commercepayments.RequestType requestType = gatewayContext.getPaymentRequestType();
     commercepayments.GatewayResponse response;
     try 
@@ -104,59 +104,70 @@ global with sharing class LoyaltyAdapter implements commercepayments.PaymentGate
     public commercepayments.GatewayResponse createCaptureResponse(commercepayments.CaptureRequest captureRequest) {
         commercepayments.CaptureResponse captureResponse = new commercepayments.CaptureResponse();
       
-        PaymentAuthorization paymentAuthorization;
-        PaymentGateway paymentGateway = [SELECT Id, PaymentGatewayName 
-                                        FROM PaymentGateway 
-                                        WHERE PaymentGatewayName = 'Loyalty' LIMIT 1];
-        
-
-        if (paymentGateway != null) {
-            paymentAuthorization = [SELECT GatewayRefNumber 
-                                    FROM PaymentAuthorization 
-                                    WHERE PaymentGatewayId =: paymentGateway.Id];
-        }
-
-
-        if (paymentAuthorization != null) {
+        try 
+        {
+            PaymentAuthorization paymentAuthorization;
+            PaymentGateway paymentGateway = [SELECT Id, PaymentGatewayName 
+                                            FROM PaymentGateway 
+                                            WHERE PaymentGatewayName = 'Loyalty' LIMIT 1];
             
-            commercepayments.PaymentsHttp http = new commercepayments.PaymentsHttp();
-            HttpRequest request = new HttpRequest();
-            request.setEndpoint('callout:Loyalty_Payment_Gateway/business_credit_card/random_card?gatewayReferenceNumber=' + paymentAuthorization.GatewayRefNumber);
-            request.setMethod('GET');
-            HttpResponse response = http.send(request);
-            
-            if(response.getStatusCode() == 200) {
-                LoyaltyCardResponse loyaltyCardResponse = LoyaltyCardResponse.parse(response.getBody());
 
-                if (loyaltyCardResponse.credit_card_type == VISA
-                    || loyaltyCardResponse.credit_card_type == MASTERCARD
-                    || loyaltyCardResponse.credit_card_type == MAESTRO) {
-                                    
-                    if(captureRequest.amount!=null )
-                    {
-                        captureResponse.setAmount(captureRequest.amount);
-                        captureResponse.setSalesforceResultCodeInfo(SUCCESS_SALESFORCE_RESULT_CODE_INFO);
-                    }
-                    else
-                    {
-                        throw new SalesforceValidationException('Required Field Missing : Amount');             
-                    }
-                } else {
-                    captureResponse.setSalesforceResultCodeInfo(DECLINE_SALESFORCE_RESULT_CODE_INFO);
-                    captureResponse.setGatewayMessage('Capture failed - Invalid credit card type:' + loyaltyCardResponse.credit_card_type);
-                }
+            if (paymentGateway != null) {
+                paymentAuthorization = [SELECT GatewayRefNumber 
+                                        FROM PaymentAuthorization 
+                                        WHERE Id =: captureRequest.paymentAuthorizationId 
+                                        ORDER BY CreatedDate DESC LIMIT 1];
             }
 
-            system.debug('Response - success');
-            captureResponse.setGatewayDate(system.now());
-            captureResponse.setGatewayResultCode('00');
-            captureResponse.setGatewayResultCodeDescription('Transaction Normal');
-            captureResponse.setGatewayReferenceNumber('SF'+getRandomNumber(6));
-        } else {
-            throw new SalesforceValidationException('Payment Gateway and/or Payment Authorization not found!');
-        }
 
-        return captureResponse;
+            if (paymentAuthorization != null) {
+                
+                commercepayments.PaymentsHttp http = new commercepayments.PaymentsHttp();
+                HttpRequest request = new HttpRequest();
+                request.setEndpoint('/business_credit_card/random_card?gatewayReferenceNumber=' + paymentAuthorization.GatewayRefNumber);
+                request.setMethod('GET');
+                HttpResponse response = http.send(request);
+                
+                if(response.getStatusCode() == 200) {
+                    LoyaltyCardResponse loyaltyCardResponse = LoyaltyCardResponse.parse(response.getBody());
+
+                    if (loyaltyCardResponse.credit_card_type == VISA
+                        || loyaltyCardResponse.credit_card_type == MASTERCARD
+                        || loyaltyCardResponse.credit_card_type == MAESTRO) {
+                                        
+                        if(captureRequest.amount!=null )
+                        {
+                            captureResponse.setAmount(captureRequest.amount);
+                            captureResponse.setSalesforceResultCodeInfo(SUCCESS_SALESFORCE_RESULT_CODE_INFO);
+                        }
+                        else
+                        {
+                            /*throw new SalesforceValidationException('Required Field Missing : Amount');*/
+                            captureResponse.setGatewayMessage('Required Field Missing : Amount');       
+                        }
+                    } else {
+                        captureResponse.setSalesforceResultCodeInfo(DECLINE_SALESFORCE_RESULT_CODE_INFO);
+                        captureResponse.setGatewayMessage('Capture failed - Invalid credit card type:' + loyaltyCardResponse.credit_card_type);
+                    }
+                }
+
+                system.debug('Response - success');
+                captureResponse.setGatewayDate(system.now());
+                captureResponse.setGatewayResultCode('00');
+                captureResponse.setGatewayResultCodeDescription('Transaction Normal');
+                captureResponse.setGatewayReferenceNumber('SF'+getRandomNumber(6));
+            } else {
+                /*throw new SalesforceValidationException('Payment Gateway and/or Payment Authorization not found!');*/
+                captureResponse.setGatewayMessage('Payment Gateway and/or Payment Authorization not found!');
+            }
+
+            return captureResponse;
+        }
+        catch(Exception e)
+        {
+            commercepayments.GatewayErrorResponse error = new commercepayments.GatewayErrorResponse('400', e.getMessage());
+            return error;
+        }
     }
 
     public commercepayments.GatewayResponse createSaleResponse(commercepayments.SaleRequest saleRequest) {
